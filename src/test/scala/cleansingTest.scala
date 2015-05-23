@@ -17,36 +17,46 @@ class Basics_Test {
   @Test
   def test1: Unit = {
     val actual = normalizeCurrencySymbol("$")
-    val desired = List("label", "normalizedcurrencysymbol")
+    val desired = " normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace $.", actual, desired)
   }
 
   @Test
   def test2: Unit = {
     val actual = normalizeCurrencySymbol("€")
-    val desired = List("label", "normalizedcurrencysymbol")
+    val desired = " normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace €.", actual, desired)
   }
 
   @Test
   def test3: Unit = {
     val actual = normalizeCurrencySymbol("£")
-    val desired = List("label", "normalizedcurrencysymbol")
+    val desired =" normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace £.", actual, desired)
   }
 
   @Test
   def test4: Unit = {
+    val HTMLCharacterEntities = List("&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
+      "&euro;", "&copy;", "&reg;")
     val text = HTMLCharacterEntities.mkString("")
 
     val expected = removeHTMLCharacterEntities(text)
-    val actual = List("label", "")
+    val actual = ""
 
     assertEquals("`removeHTMLCharacterEntities` should remove all HTML character entities.", expected, actual)
   }
 
   @Test
   def test5: Unit = {
+
+  }
+
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  @Test
+  def VectorizationTest1: Unit = {
     val document = Array("Hello", "this", "is", "a", "test", "One", "two", "three", "test", "test")
     val wordList = List("A", "be", "hello", "is", "one", "test", "this", "three", "two", "zoo")
 
@@ -57,7 +67,7 @@ class Basics_Test {
   }
 
   @Test
-  def test6: Unit = {
+  def VectorizationTest2: Unit = {
     val input = "To be or not to be that is the question" + "That is utter rubbish"
     val document = input.split(" ")
     val wordList = List("be", "not", "To", "unused")
