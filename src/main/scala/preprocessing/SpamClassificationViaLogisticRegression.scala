@@ -2,9 +2,6 @@ package preprocessing
 
 import java.io.{FileWriter, StringReader}
 import java.util.regex._
-import org.slf4j.Logger
-import org.spark
-import org.spark
 
 import scala.collection.Map
 import scala.collection.immutable.ListMap
@@ -17,10 +14,14 @@ import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg
 
+
 object LineCleaner {
   type SMSText = String
-  val HTMLCharacterEntities = List(/*"&nbsp;",*/ "&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
-    "&euro;", "&copy;", "&reg;")
+
+
+  def normalizeTemplate(text: SMSText, regex: String, normalizationString: String) = {
+    ???
+  }
 
   /**
    * Returns `line` with the following occurrences removed:
@@ -118,6 +119,8 @@ object LineCleaner {
    * Returns `line` with HTML character entities removed.
    */
   def removeHTMLCharacterEntities(text: SMSText): SMSText = {
+    val HTMLCharacterEntities = List(/*"&nbsp;",*/ "&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
+      "&euro;", "&copy;", "&reg;")
     val regex = "(" + HTMLCharacterEntities.map(x => "\\" + x).mkString("|") + ")"
     val pattern = Pattern.compile(regex)
     val matcher = pattern.matcher(text)
@@ -147,16 +150,16 @@ object LineCleaner {
 
 object DocumentVectorizer {
   def vectorize(document: Array[String], wordList: List[String]): linalg.Vector = {
-    val wordList_ = wordList.map(_.toLowerCase).sorted
-    val document_ = document.map(_.toLowerCase)
+    val _document = document.map(_.toLowerCase)
+    val _wordList = wordList.map(_.toLowerCase).sorted
 
-    val initial = scala.collection.mutable.Map[String, Double]()
-    wordList_.foreach(word => initial(word) = 0.0)
+    val initialWordCounts = scala.collection.mutable.Map[String, Double]()
+    _wordList.foreach(word => initialWordCounts(word) = 0.0)
 
-    val wordCounts = document_.foldLeft(initial) { (acc, word) =>
+    val wordCounts = _document.foldLeft(initialWordCounts) { (acc, word) =>
       if (acc.contains(word)) {
         acc(word) = acc(word) + 1.0
-      } else if (wordList_ contains word) {
+      } else if (_wordList contains word) {
         acc(word) = 1.0
       }
 
@@ -165,7 +168,6 @@ object DocumentVectorizer {
 
     val wordCountsSorted = ListMap(wordCounts.toSeq.sortBy(_._1): _*)
 
-
     Vectors.dense(wordCountsSorted.values.toArray)
   }
 }
@@ -173,27 +175,30 @@ object DocumentVectorizer {
 case class LogRegHelper(training: RDD[LabeledPoint], test: RDD[LabeledPoint]) {
   def evaluateModel(predictionAndLabels: RDD[(Double, Double)], msg: String) = {
     val metrics = new MulticlassMetrics(predictionAndLabels)
-
     val cfMatrix = metrics.confusionMatrix
 
     println(msg)
 
-    println(
+    printf(
       s"""
-           |  ============== Predicted class =================
-           |   0                       \t 1
-           | +------------------------------------------------
-           |0| ${cfMatrix.apply(0, 0)} \t ${cfMatrix.apply(0, 1)}
-           |1| ${cfMatrix.apply(1, 0)} \t ${cfMatrix.apply(1, 1)}
-         """.stripMargin)
+           |=================== Confusion matrix ==========================
+           |          | %-15s                     %-15s
+           |----------+----------------------------------------------------
+           |Actual = 0| %-15f                     %-15f
+           |Actual = 1| %-15f                     %-15f
+           |===============================================================
+         """.stripMargin, "Predicted = 0", "Predicted = 1",
+      cfMatrix.apply(0, 0), cfMatrix.apply(0, 1), cfMatrix.apply(1, 0), cfMatrix.apply(1, 1))
+
+    cfMatrix.toArray
 
     val fpr = metrics.falsePositiveRate(0)
     val tpr = metrics.truePositiveRate(0)
 
     println(
       s"""
-       |fpr = $fpr
-       |tpr = $tpr
+       |False positive rate = $fpr
+       |True positive rate = $tpr
      """.stripMargin)
   }
 
@@ -209,32 +214,34 @@ case class LogRegHelper(training: RDD[LabeledPoint], test: RDD[LabeledPoint]) {
   }
 
   def performLogRegWithWeightsGiven() = {
-    val weights: Vector = Vectors.dense(0.846188136825261, -5.18817119544996, -0.0603825085891041,
-      -0.370802595044446, 0.106146184771286, 0.131813801370727, -0.33219182055294,
-      -0.251976582842262, 1.47835111947401, 0.0844114904554783, -0.735542132664075,
-      0.625040867988052, 2.26379708159678, -0.452403718205055, -0.320094958360598,
-      -2.32127125213211, 0.419040871943417, 0.0239397680562398, -2.57118870620323,
-      0.692364403091971, 1.1923670631835, 1.57869641218471, 1.50873878844324,
-      -0.0283106820897681, -0.691660460338901, -0.718692609792941, -2.4149377098733,
-      -0.685288881242416, 1.15350919054951, -17.4415926553067, -1.30034663531021,
-      -3.46794642436138, -0.560918156760458, -0.965430430458044, -17.6362101522642,
-      -0.0443338747000637, -2.18325400504607, -1.19434224227548, 0.507924581548693,
-      -0.348731429359891, -1.77830959306006, -1.2469989638301, -1.36096379814969,
-      -0.080658893753968, -0.173687598811924, -15.4443590375355, 0.171118296762664,
-      -2.7611687451968, 3.29754789745628, -2.09401166501395, -0.227482570481864,
-      0.822697583566979, 1.64748311454022, -0.651905841784664, 0.534642164277911,
-      -16.7633729206904, 1.19838281729727, -0.531649248073125, 1.33397580612831,
-      -0.00115810680484342, -3.9082208822064, -0.0949295634720226, -2.62838212012419,
-      -1.17267535297808, 0.991355936571525, 0.80421085142069, 0.372400880124102,
-      5.50186821378904, 0.604737011663758, 3.076788369929, 0.545664519147207,
-      0.690518707161155, -16.0297923009408, 0.125980861704569, -0.631416941560258,
-      -4.53455579443458, 2.85945405658738, -2.84304755007709, -1.15070103050509,
-      3.38591670870141, -0.11624183957874, 0.115178943623855, -5.02178453252912,
-      0.0965672986025181, 0.732412186988545, 0.63202648542262, 0.46474496862942,
-      0.744793049081746, 5.91141929686634, -0.369280546818945, -1.16142559406819,
-      -0.303337374470385, 0.891466048754432, -7.72594354407987, -0.027605494608393,
-      0.26032049423333, 0.431296003329938, 0.617755031912166, 1.36930879186566,
-      0.146628014258258, 0.777217750538689, -23.7157831129643)
+    val weights: Vector = Vectors.dense(
+      0.846188136825261, -5.18817119544996, -0.0603825085891041, -0.370802595044446,
+      0.106146184771286, 0.131813801370727, -0.33219182055294, -0.251976582842262,
+      1.47835111947401, 0.0844114904554783, -0.735542132664075, 0.625040867988052,
+      2.26379708159678, -0.452403718205055, -0.320094958360598, -2.32127125213211,
+      0.419040871943417, 0.0239397680562398, -2.57118870620323, 0.692364403091971,
+      1.1923670631835, 1.57869641218471, 1.50873878844324, -0.0283106820897681,
+      -0.691660460338901, -0.718692609792941, -2.4149377098733, -0.685288881242416,
+      1.15350919054951, -17.4415926553067, -1.30034663531021, -3.46794642436138,
+      -0.560918156760458, -0.965430430458044, -17.6362101522642, -0.0443338747000637,
+      -2.18325400504607, -1.19434224227548, 0.507924581548693, -0.348731429359891,
+      -1.77830959306006, -1.2469989638301, -1.36096379814969, -0.080658893753968,
+      -0.173687598811924, -15.4443590375355, 0.171118296762664, -2.7611687451968,
+      3.29754789745628, -2.09401166501395, -0.227482570481864, 0.822697583566979,
+      1.64748311454022, -0.651905841784664, 0.534642164277911, -16.7633729206904,
+      1.19838281729727, -0.531649248073125, 1.33397580612831, -0.00115810680484342,
+      -3.9082208822064, -0.0949295634720226, -2.62838212012419, -1.17267535297808,
+      0.991355936571525, 0.80421085142069, 0.372400880124102, 5.50186821378904,
+      0.604737011663758, 3.076788369929, 0.545664519147207, 0.690518707161155,
+      -16.0297923009408, 0.125980861704569, -0.631416941560258, -4.53455579443458,
+      2.85945405658738, -2.84304755007709, -1.15070103050509, 3.38591670870141,
+      -0.11624183957874, 0.115178943623855, -5.02178453252912, 0.0965672986025181,
+      0.732412186988545, 0.63202648542262, 0.46474496862942, 0.744793049081746,
+      5.91141929686634, -0.369280546818945, -1.16142559406819, -0.303337374470385,
+      0.891466048754432, -7.72594354407987, -0.027605494608393, 0.26032049423333,
+      0.431296003329938, 0.617755031912166, 1.36930879186566, 0.146628014258258,
+      0.777217750538689, -23.7157831129643
+    )
     val modelFromWeightVect = new LogisticRegressionModel(weights, intercept = -5.38059943249913)
 
     val predictionAndLabels = test.map { case LabeledPoint(label, features) =>
@@ -284,7 +291,8 @@ object SpamClassificationViaLogisticRegression {
     val separator = '\t'
 
     /**
-     * Contains the [[LabeledSMSText]]s that are correctly parsed from the input file.
+     * Contains the [[preprocessing.SpamClassificationViaLogisticRegression.LabeledSMSText]]s
+     * that are correctly parsed from the input file.
      */
     val labeledSmsTexts: RDD[LabeledSMSText] = input.map { line =>
       val reader = new CSVReader(new StringReader(line), separator)
@@ -356,7 +364,6 @@ object SpamClassificationViaLogisticRegression {
     logRegHelper.performLogRegWithWeightsGiven()
   }
 }
-
 
 // TODO:
 // 0) Make a summary statistic to learn how many words are there actually.
