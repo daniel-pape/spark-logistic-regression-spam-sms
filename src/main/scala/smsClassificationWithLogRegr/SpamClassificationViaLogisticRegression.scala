@@ -1,17 +1,19 @@
-package preprocessing
+package smsClassificationWithLogRegr
 
 import java.io.{FileWriter, StringReader}
 import java.util.regex._
-import scala.collection.Map
-import scala.collection.immutable.ListMap
-import com.opencsv.{CSVWriter, CSVReader}
-import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkContext, SparkConf}
+
+import com.opencsv.{CSVReader, CSVWriter}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
+import org.apache.spark.mllib.linalg
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.linalg
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+import scala.collection.Map
+import scala.collection.immutable.ListMap
 
 object LineCleaner {
   type SMSText = String
@@ -301,7 +303,7 @@ object SpamClassificationViaLogisticRegression extends App {
   val separator = '\t'
 
   /**
-   * Contains the [[preprocessing.SpamClassificationViaLogisticRegression.LabeledSMSText]]s
+   * Contains the [[smsClassificationWithLogRegr.SpamClassificationViaLogisticRegression.LabeledSMSText]]s
    * that are correctly parsed from the input file.
    */
   val labeledSmsTexts: RDD[LabeledSMSText] = input.map { line =>

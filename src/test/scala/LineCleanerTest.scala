@@ -1,42 +1,36 @@
 package Test
 
-import com.google.common.collect.ImmutableMap
-import org.apache.spark.mllib.linalg.Vectors
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import preprocessing.DocumentVectorizer
-
-import preprocessing.LineCleaner._
-
-import scala.collection.immutable.ListMap
+import smsClassificationWithLogRegr.LineCleaner._
 
 @RunWith(classOf[JUnit4])
 class LineCleanerTest {
   @Test
-  def test1: Unit = {
+  def test1(): Unit = {
     val actual = normalizeCurrencySymbol("$")
     val desired = " normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace $.", actual, desired)
   }
 
   @Test
-  def test2: Unit = {
+  def test2(): Unit = {
     val actual = normalizeCurrencySymbol("€")
     val desired = " normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace €.", actual, desired)
   }
 
   @Test
-  def test3: Unit = {
+  def test3(): Unit = {
     val actual = normalizeCurrencySymbol("£")
     val desired =" normalizedcurrencysymbol "
     assertEquals("`normalizeCurrencySymbol` should replace £.", actual, desired)
   }
 
   @Test
-  def test4: Unit = {
+  def test4(): Unit = {
     val HTMLCharacterEntities = List("&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
       "&euro;", "&copy;", "&reg;")
     val text = HTMLCharacterEntities.mkString("")
@@ -48,7 +42,7 @@ class LineCleanerTest {
   }
 
   @Test
-  def normalizeURLTest1: Unit = {
+  def normalizeURLTest1(): Unit = {
     val text = "This text contains www.example.co.uk"
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl "
@@ -57,7 +51,7 @@ class LineCleanerTest {
   }
 
   @Test
-  def normalizeURLTest2: Unit = {
+  def normalizeURLTest2(): Unit = {
     val text = "This text contains http://www.something.com."
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl ."
@@ -66,7 +60,7 @@ class LineCleanerTest {
   }
 
   @Test
-  def normalizeURLTest3: Unit = {
+  def normalizeURLTest3(): Unit = {
     val text = "This text contains https://www.security.com."
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl ."

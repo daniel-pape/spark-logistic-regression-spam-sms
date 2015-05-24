@@ -5,7 +5,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import preprocessing.DocumentVectorizer
+import smsClassificationWithLogRegr.DocumentVectorizer
 
 @RunWith(classOf[JUnit4])
 class DocumentVectorizerTest {
@@ -18,7 +18,7 @@ class DocumentVectorizerTest {
   }
 
   @Test
-  def Median1: Unit = {
+  def Median1(): Unit = {
     val xs = List(1L, 2L, 3L)
 
     val expected = 2L
@@ -28,7 +28,7 @@ class DocumentVectorizerTest {
   }
 
   @Test
-  def Median2: Unit = {
+  def Median2(): Unit = {
     val xs = List(1L)
 
     val expected = 1L
@@ -38,7 +38,7 @@ class DocumentVectorizerTest {
   }
 
   @Test
-  def Median3: Unit = {
+  def Median3(): Unit = {
     val xs = List(1L, 2L)
 
     val expected = 2L
@@ -49,7 +49,7 @@ class DocumentVectorizerTest {
 
 
   @Test
-  def Median4: Unit = {
+  def Median4(): Unit = {
     val xs = List(1L, 2L, 3L, 4L)
 
     val expected = 3L
@@ -61,7 +61,7 @@ class DocumentVectorizerTest {
   // -------------------------------------------------------------------------------------------------------------------
 
   @Test
-  def VectorizationTest1: Unit = {
+  def VectorizationTest1(): Unit = {
     val document = Array("Hello", "this", "is", "a", "test", "One", "two", "three", "test", "test")
     val wordList = List("A", "be", "hello", "is", "one", "test", "this", "three", "two", "zoo")
 
@@ -72,7 +72,7 @@ class DocumentVectorizerTest {
   }
 
   @Test
-  def VectorizationTest2: Unit = {
+  def VectorizationTest2(): Unit = {
     val input = "To be or not to be that is the question" + "That is utter rubbish"
     val document = input.split(" ")
     val wordList = List("be", "not", "To", "unused")
