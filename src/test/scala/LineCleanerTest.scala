@@ -68,4 +68,44 @@ class LineCleanerTest {
     val msg = "Substring starting with 'https://www.' should be normalized."
     assertEquals(msg, expected, actual)
   }
+
+  @Test
+  def normalizeEmailAddressTest1(): Unit = {
+    val text = "This text contains john.doe@example.com."
+    val actual = normalizeEmailAddress(text)
+    val expected = "This text contains  normalizedemailadress ."
+
+    val msg = "Substring containing '@' should be normalized."
+    assertEquals(msg, expected, actual)
+  }
+
+  @Test
+  def normalizeEmailAddressTest2(): Unit = {
+    val text = "This text contains herr-mustermann@bespiel.de."
+    val actual = normalizeEmailAddress(text)
+    val expected = "This text contains  normalizedemailadress ."
+
+    val msg = "Substring containing '@' should be normalized."
+    assertEquals(msg, expected, actual)
+  }
+
+  @Test
+  def normalizeEmailAddressTest3(): Unit = {
+    val text = "This text contains herrmustermann@bespiel.de."
+    val actual = normalizeEmailAddress(text)
+    val expected = "This text contains  normalizedemailadress ."
+
+    val msg = "Substring containing '@' should be normalized."
+    assertEquals(msg, expected, actual)
+  }
+
+  @Test
+  def normalizeEmailAddressTest4(): Unit = {
+    val text = "This text contains kate@palace.uk."
+    val actual = normalizeEmailAddress(text)
+    val expected = "This text contains  normalizedemailadress ."
+
+    val msg = "Substring containing '@' should be normalized."
+    assertEquals(msg, expected, actual)
+  }
 }

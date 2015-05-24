@@ -96,25 +96,21 @@ object LineCleaner {
   /**
    * Returns `text` with every occurrence of one of an email address
    * replaced by the string literal " normalizedemailadress ".
+   *
+   * @note This implementation does only a very naive test and
+   * also will miss certain cases.
    */
   def normalizeEmailAddress(text: SMSText): SMSText = {
-    val cleanedText = text.split(" ").map { token =>
-      if (token.contains("@")) {
-        " normalizedemailadress "
-      } else {
-        token
-      }
-    }.mkString(" ")
-
-    cleanedText
+    val regex = "\\w+(\\.|-)*\\w+@.*\\.(com|de|uk)"
+    applyNormalizationTemplate(text, regex, " normalizedemailadress ")
   }
 
   /**
-   * Returns `line` with HTML character entities removed.
+   * Returns `line` with HTML character entities, exluding whitespace "&nbsp;"
+   * which will be treated elsewhere, removed.
    */
   def removeHTMLCharacterEntities(text: SMSText): SMSText = {
-    val HTMLCharacterEntities = List(/*"&nbsp;",*/ "&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
-      "&euro;", "&copy;", "&reg;")
+    val HTMLCharacterEntities = List("&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;", "&euro;", "&copy;", "&reg;")
     val regex = "(" + HTMLCharacterEntities.map(x => "\\" + x).mkString("|") + ")"
     val pattern = Pattern.compile(regex)
     val matcher = pattern.matcher(text)
