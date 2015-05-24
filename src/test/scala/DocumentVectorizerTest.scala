@@ -13,45 +13,55 @@ import preprocessing.LineCleaner._
 import scala.collection.immutable.ListMap
 
 @RunWith(classOf[JUnit4])
-class Basics_Test {
-  @Test
-  def test1: Unit = {
-    val actual = normalizeCurrencySymbol("$")
-    val desired = " normalizedcurrencysymbol "
-    assertEquals("`normalizeCurrencySymbol` should replace $.", actual, desired)
+class DocumentVectorizer {
+  def median(xs: List[Long]): Long = {
+    require(!xs.isEmpty, "Call of median with empty list in median(xs = $xs). Not defined.")
+    val n = xs.length
+    val median = if (n % 2 == 0) xs(n / 2) else xs((n - 1) / 2)
+
+    median
   }
 
   @Test
-  def test2: Unit = {
-    val actual = normalizeCurrencySymbol("€")
-    val desired = " normalizedcurrencysymbol "
-    assertEquals("`normalizeCurrencySymbol` should replace €.", actual, desired)
+  def Median1: Unit = {
+    val xs = List(1L, 2L, 3L)
+
+    val expected = 2L
+    val actual = median(xs)
+
+    assertEquals(s"Median of $xs should be ${1L}", expected, actual)
   }
 
   @Test
-  def test3: Unit = {
-    val actual = normalizeCurrencySymbol("£")
-    val desired =" normalizedcurrencysymbol "
-    assertEquals("`normalizeCurrencySymbol` should replace £.", actual, desired)
+  def Median2: Unit = {
+    val xs = List(1L)
+
+    val expected = 1L
+    val actual = median(xs)
+
+    assertEquals(s"Median of $xs should be ${1L}", expected, actual)
   }
 
   @Test
-  def test4: Unit = {
-    val HTMLCharacterEntities = List("&lt;", "&gt;", "&amp;", "&cent;", "&pound;", "&yen;",
-      "&euro;", "&copy;", "&reg;")
-    val text = HTMLCharacterEntities.mkString("")
+  def Median3: Unit = {
+    val xs = List(1L, 2L)
 
-    val expected = removeHTMLCharacterEntities(text)
-    val actual = ""
+    val expected = 2L
+    val actual = median(xs)
 
-    assertEquals("`removeHTMLCharacterEntities` should remove all HTML character entities.", expected, actual)
+    assertEquals(s"Median of $xs should be ${2L}", expected, actual)
   }
+
 
   @Test
-  def test5: Unit = {
+  def Median4: Unit = {
+    val xs = List(1L, 2L, 3L, 4L)
 
+    val expected = 3L
+    val actual = median(xs)
+
+    assertEquals(s"Median of $xs should be ${3L}", expected, actual)
   }
-
 
   // -------------------------------------------------------------------------------------------------------------------
 
