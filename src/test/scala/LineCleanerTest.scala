@@ -1,5 +1,3 @@
-package Test
-
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,7 +45,8 @@ class LineCleanerTest {
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl "
 
-    assertEquals(" ", expected, actual)
+    val msg = "Substring starting with 'www.' should be normalized."
+    assertEquals(msg, expected, actual)
   }
 
   @Test
@@ -56,7 +55,8 @@ class LineCleanerTest {
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl ."
 
-    assertEquals(" ", expected, actual)
+    val msg = "Substring starting with 'http://www.' should be normalized."
+    assertEquals(msg, expected, actual)
   }
 
   @Test
@@ -65,6 +65,7 @@ class LineCleanerTest {
     val actual = normalizeURL(text)
     val expected = "This text contains  normalizedurl ."
 
-    assertEquals(" ", expected, actual)
+    val msg = "Substring starting with 'https://www.' should be normalized."
+    assertEquals(msg, expected, actual)
   }
 }
