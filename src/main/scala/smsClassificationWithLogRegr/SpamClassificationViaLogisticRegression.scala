@@ -1,9 +1,9 @@
 package smsClassificationWithLogRegr
 
-import java.io.{FileWriter, StringReader}
+import java.io.StringReader
 import java.util.regex._
 
-import com.opencsv.{CSVReader, CSVWriter}
+import com.opencsv.CSVReader
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 import org.apache.spark.mllib.linalg
@@ -202,34 +202,9 @@ case class LogRegHelper(training: RDD[LabeledPoint], test: RDD[LabeledPoint]) {
    * Uses weights as found with using R's glm-method on the data.
    */
   def performLogRegWithWeightsGiven() = {
-    val weights: Vector = Vectors.dense(0.846188136825261, -5.18817119544996, -0.0603825085891041,
-      -0.370802595044446, 0.106146184771286, 0.131813801370727, -0.33219182055294,
-      -0.251976582842262, 1.47835111947401, 0.0844114904554783, -0.735542132664075,
-      0.625040867988052, 2.26379708159678, -0.452403718205055, -0.320094958360598,
-      -2.32127125213211, 0.419040871943417, 0.0239397680562398, -2.57118870620323,
-      0.692364403091971, 1.1923670631835, 1.57869641218471, 1.50873878844324,
-      -0.0283106820897681, -0.691660460338901, -0.718692609792941, -2.4149377098733,
-      -0.685288881242416, 1.15350919054951, -17.4415926553067, -1.30034663531021,
-      -3.46794642436138, -0.560918156760458, -0.965430430458044, -17.6362101522642,
-      -0.0443338747000637, -2.18325400504607, -1.19434224227548, 0.507924581548693,
-      -0.348731429359891, -1.77830959306006, -1.2469989638301, -1.36096379814969,
-      -0.080658893753968, -0.173687598811924, -15.4443590375355, 0.171118296762664,
-      -2.7611687451968, 3.29754789745628, -2.09401166501395, -0.227482570481864,
-      0.822697583566979, 1.64748311454022, -0.651905841784664, 0.534642164277911,
-      -16.7633729206904, 1.19838281729727, -0.531649248073125, 1.33397580612831,
-      -0.00115810680484342, -3.9082208822064, -0.0949295634720226, -2.62838212012419,
-      -1.17267535297808, 0.991355936571525, 0.80421085142069, 0.372400880124102,
-      5.50186821378904, 0.604737011663758, 3.076788369929, 0.545664519147207,
-      0.690518707161155, -16.0297923009408, 0.125980861704569, -0.631416941560258,
-      -4.53455579443458, 2.85945405658738, -2.84304755007709, -1.15070103050509,
-      3.38591670870141, -0.11624183957874, 0.115178943623855, -5.02178453252912,
-      0.0965672986025181, 0.732412186988545, 0.63202648542262, 0.46474496862942,
-      0.744793049081746, 5.91141929686634, -0.369280546818945, -1.16142559406819,
-      -0.303337374470385, 0.891466048754432, -7.72594354407987, -0.027605494608393,
-      0.26032049423333, 0.431296003329938, 0.617755031912166, 1.36930879186566,
-      0.146628014258258, 0.777217750538689, -23.7157831129643)
+    val weights: Vector = Vectors.dense(0.833746175771938, -8.14785021875383, 0.262432330501285, -1.99937910634496, 0.0701712890615536, -0.0655936191264802, -0.408980369055153, -0.64735376719599, 0.187689073816036, 0.444532778573028, -1.82185138663877, -0.299199000541482, 2.31516305041443, -1.20272016568996, -0.986122187022145, -2.64252259577002, 0.463299917001461, -0.173437185656004, -3.91068762983306, 1.35965422940282, 1.52015523414972, 1.83265596455018, 1.81824680990771, -0.313131391452917, 0.934396040099803, -5.40867555026167, -2.17498569362759, -1.34870602549693, 1.00493800384595, -17.7159890027605, -0.930304977242082, -6.87226529722958, 0.0855885591427657, -0.804628085850171, -17.7460708574958, 0.15799019189578, -0.782987768162063, -1.08898113635445, 0.413651064428496, -0.612556409851058, -0.461391500104352, -1.51467410854431, -2.4728228258393, -0.555290998510442, -1.55495639417079, -14.0790329276713, 0.401977714192125, -0.749594476917577, 3.35723787518922, -3.38910148089078, -1.84194781827946, 1.17692030442642, 1.28164263121303, -0.859727559886968, 0.592687850763686, -21.1746482611403, 1.222326460073, 0.105447941207522, 1.98943383260695, 0.154573763624215, -8.04888988042938, 0.322575450324963, -2.4713916922247, -0.630249323238556, 1.16676457898518, 1.38005096840468, 0.992897490203946, 6.92019824684486, 0.172027533353067, 3.11379634062188, -0.52795842985082, -0.186240279801438, -16.4342857312628, -0.373329497410705, 0.412183688689398, -6.5135497459829, 3.6294912352502, -2.50428782239549, -5.12844160686143, 3.60797693773892, -0.292857171731344, 0.0946066479208479, -11.0074891104762, -0.0831555934189275, 1.74249581253245, 0.394388044202608, 0.539190182405179, 0.482986971371907, 6.39124882217174, -0.105263235643331, -2.38401364176317, -0.254393891600753, -0.180853172979074, -3.47164143230984, -0.0425966559519551, 0.392074116932297, -0.976741866808988, 0.0260112523189486, 1.08030356208503, 0.505333487193278, 0.67775870127618, -24.9360052033549)
 
-    val modelFromWeightVect = new LogisticRegressionModel(weights, intercept = -5.38059943249913)
+    val modelFromWeightVect = new LogisticRegressionModel(weights, intercept = -5.70797110359394)
 
     val predictionAndLabels = test.map { case LabeledPoint(label, features) =>
       val prediction = modelFromWeightVect.predict(features)
@@ -245,48 +220,28 @@ object SpamClassificationViaLogisticRegression extends App {
   case class LabeledTokenizedSMSText(label: String, tokenizedSMSText: Array[String])
   case class LabeledTFVector(encodedLabel: Int, TFVector: linalg.Vector)
 
-  def writeToFile(labeledTfVectors: RDD[LabeledTFVector]) = {
-    val outputPath = "./src/main/resources/data/tf-vectors.tsv"
-    val separator = '\t'
-    val writer = new CSVWriter(new FileWriter(outputPath), separator)
-
-    labeledTfVectors.foreach {
-      labeledTfVector =>
-        val label = Array(labeledTfVector.encodedLabel.toString)
-        val features = labeledTfVector.TFVector.toArray.map(_.toString)
-        val entry = Array.concat(label, features)
-        writer.writeNext(entry)
-    }
-
-    writer.close()
-  }
+//  def writeToFile(labeledTfVectors: RDD[LabeledTFVector]) = {
+//    val outputPath = "./src/main/resources/data/tf-vectors.tsv"
+//    val separator = '\t'
+//    val writer = new CSVWriter(new FileWriter(outputPath), separator)
+//
+//    labeledTfVectors.foreach {
+//      labeledTfVector =>
+//        val label = Array(labeledTfVector.encodedLabel.toString)
+//        val features = labeledTfVector.TFVector.toArray.map(_.toString)
+//        val entry = Array.concat(label, features)
+//        writer.writeNext(entry)
+//    }
+//
+//    writer.close()
+//  }
 
   def getTop100WordsList(labeledTokenizedSmsTexts: RDD[LabeledTokenizedSMSText]): List[String] = {
     val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
     val wordCount = words.map(word => (word, 1)).reduceByKey((k, l) => k + l).collect().size
     val wordFrequencyMap: Map[String, Long] = words.countByValue()
 
-    val x: List[Long] = wordFrequencyMap.values.toList
-
-    // Local helper:
-    def median(xs: List[Long]): Long = {
-      require(!xs.isEmpty, "Call of median with empty list in median(xs = $xs). Not defined.")
-      val n = xs.length
-      val median = if (n % 2 == 0) xs(n / 2) else xs((n + 1) / 2)
-
-      median
-    }
-
-    val threshold = median(wordFrequencyMap.values.toSet.toList) // 136?
-    //    val counts = wordFrequencyMap.values.toList
-    //    val uniqueCounts = counts.toSet.toList.sorted
-    //    val threshold = uniqueCounts(uniqueCounts.length - 50)
-    //
-    //
-    //    println("Values: " + uniqueCounts)
-    //    println("Length: " + uniqueCounts.length)
-    //    println("Threshold:" + threshold)
-
+    val threshold = 136
     val top100Words = wordFrequencyMap.filter { case (word, freq) => freq >= threshold}
     val top100WordsList: List[String] = top100Words.keySet.toList
 
@@ -354,18 +309,19 @@ object SpamClassificationViaLogisticRegression extends App {
       LabeledTFVector(encodedLabel, TFVector)
   }
 
-  val outputPath = "./src/main/resources/data/tf-vectors.tsv"
-  val writer = new CSVWriter(new FileWriter(outputPath), separator)
 
-  labeledTFVectors.foreach {
-    labeledTfVector =>
-      val label = Array(labeledTfVector.encodedLabel.toString)
-      val features = labeledTfVector.TFVector.toArray.map(_.toString)
-      val entry = Array.concat(label, features)
-      writer.writeNext(entry)
-  }
-
-  writer.close()
+//  val outputPath = "./src/main/resources/data/tf-vectors.tsv"
+//  val writer = new CSVWriter(new FileWriter(outputPath), separator)
+//
+//  labeledTFVectors.foreach {
+//    labeledTfVector =>
+//      val label = Array(labeledTfVector.encodedLabel.toString)
+//      val features = labeledTfVector.TFVector.toArray.map(_.toString)
+//      val entry = Array.concat(label, features)
+//      writer.writeNext(entry)
+//  }
+//
+//  writer.close()
 
   /**
    * Contains the data for building the logistic regression model.
@@ -382,7 +338,7 @@ object SpamClassificationViaLogisticRegression extends App {
   val logRegHelper = LogRegHelper(training, test)
 
   logRegHelper.performLogReg()
-  //    logRegHelper.performLogRegWithWeightsGiven()
+  logRegHelper.performLogRegWithWeightsGiven()
 }
 
 // TODO:
