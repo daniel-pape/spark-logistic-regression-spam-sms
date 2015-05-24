@@ -1,6 +1,5 @@
 package Test
 
-import com.google.common.collect.ImmutableMap
 import org.apache.spark.mllib.linalg.Vectors
 import org.junit.Assert._
 import org.junit.Test
@@ -8,12 +7,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import preprocessing.DocumentVectorizer
 
-import preprocessing.LineCleaner._
-
-import scala.collection.immutable.ListMap
-
 @RunWith(classOf[JUnit4])
-class DocumentVectorizer {
+class DocumentVectorizerTest {
   def median(xs: List[Long]): Long = {
     require(!xs.isEmpty, "Call of median with empty list in median(xs = $xs). Not defined.")
     val n = xs.length
