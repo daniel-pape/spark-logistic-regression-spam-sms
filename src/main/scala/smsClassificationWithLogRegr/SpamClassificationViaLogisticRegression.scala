@@ -1,9 +1,9 @@
 package smsClassificationWithLogRegr
 
-import java.io.StringReader
+import java.io.{FileWriter, StringReader}
 import java.util.regex._
 
-import com.opencsv.CSVReader
+import com.opencsv.{CSVReader, CSVWriter}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 import org.apache.spark.mllib.linalg
@@ -286,21 +286,21 @@ object SpamClassificationViaLogisticRegression extends App {
   case class LabeledTokenizedSMSText(label: String, tokenizedSMSText: Array[String])
   case class LabeledTFVector(encodedLabel: Int, TFVector: linalg.Vector)
 
-  //  def writeToFile(labeledTfVectors: RDD[LabeledTFVector]) = {
-  //    val outputPath = "./src/main/resources/data/tf-vectors.tsv"
-  //    val separator = '\t'
-  //    val writer = new CSVWriter(new FileWriter(outputPath), separator)
-  //
-  //    labeledTfVectors.foreach {
-  //      labeledTfVector =>
-  //        val label = Array(labeledTfVector.encodedLabel.toString)
-  //        val features = labeledTfVector.TFVector.toArray.map(_.toString)
-  //        val entry = Array.concat(label, features)
-  //        writer.writeNext(entry)
-  //    }
-  //
-  //    writer.close()
-  //  }
+  def writeToFile(labeledTfVectors: RDD[LabeledTFVector]) = {
+    val outputPath = "./src/main/resources/data/tf-vectors.tsv"
+    val separator = '\t'
+    val writer = new CSVWriter(new FileWriter(outputPath), separator)
+
+    labeledTfVectors.foreach {
+      labeledTfVector =>
+        val label = Array(labeledTfVector.encodedLabel.toString)
+        val features = labeledTfVector.TFVector.toArray.map(_.toString)
+        val entry = Array.concat(label, features)
+        writer.writeNext(entry)
+    }
+
+    writer.close()
+  }
 
   def getTop100WordsList(labeledTokenizedSmsTexts: RDD[LabeledTokenizedSMSText]): List[String] = {
     val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
@@ -375,20 +375,6 @@ object SpamClassificationViaLogisticRegression extends App {
       LabeledTFVector(encodedLabel, TFVector)
   }
 
-
-  //  val outputPath = "./src/main/resources/data/tf-vectors.tsv"
-  //  val writer = new CSVWriter(new FileWriter(outputPath), separator)
-  //
-  //  labeledTFVectors.foreach {
-  //    labeledTfVector =>
-  //      val label = Array(labeledTfVector.encodedLabel.toString)
-  //      val features = labeledTfVector.TFVector.toArray.map(_.toString)
-  //      val entry = Array.concat(label, features)
-  //      writer.writeNext(entry)
-  //  }
-  //
-  //  writer.close()
-
   /**
    * Contains the data for building the logistic regression model.
    */
@@ -406,7 +392,3 @@ object SpamClassificationViaLogisticRegression extends App {
   logRegHelper.performLogReg()
   logRegHelper.performLogRegWithWeightsGiven()
 }
-
-// TODO:
-// 1) Later experiment with TF-IDF vectors. Would IDF bring improvement?
-// 2) Refactor preprocessing.LineCleaner.normalizeEmailAddress
