@@ -2,7 +2,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import smsClassificationWithLogRegr.LineCleaner._
+import preprocessing.LineCleaner._
 
 @RunWith(classOf[JUnit4])
 class LineCleanerTest {

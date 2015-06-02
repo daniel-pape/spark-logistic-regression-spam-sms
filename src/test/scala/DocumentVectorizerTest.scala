@@ -5,7 +5,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import smsClassificationWithLogRegr.DocumentVectorizer
+import preprocessing.DocumentVectorizer
 
 @RunWith(classOf[JUnit4])
 class DocumentVectorizerTest {
