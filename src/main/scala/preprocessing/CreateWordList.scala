@@ -9,18 +9,11 @@ import scala.collection.Map
 import scala.io.Source._
 
 object CreateWordList {
-  // TODO: Test this method...
-  def getTopWordsList(labeledTokenizedSmsTexts: List[LabeledTokenizedSMSText]): List[String] = {
-    val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
-
-    println("words: " + words)
-
+  def createWordFrequencyMap(words: List[String]) = {
     val initialWordFrequencyMap = scala.collection.mutable.Map[String, Int]()
 
     val wordFrequencyMap: Map[String, Int] = words.foldLeft(initialWordFrequencyMap) {
       (acc, word) =>
-        System.err.println(word)
-
         if (acc.contains(word)) {
           acc(word) += 1
         } else {
@@ -30,8 +23,12 @@ object CreateWordList {
         acc
     }
 
-    wordFrequencyMap.foreach(println)
+    wordFrequencyMap
+  }
 
+  def getTopWordsList(labeledTokenizedSmsTexts: List[LabeledTokenizedSMSText]): List[String] = {
+    val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
+    val wordFrequencyMap = createWordFrequencyMap(words)
     val threshold = 136
     val topWords = wordFrequencyMap.filter { case (word, freq) => freq >= threshold}
     val topWordsList: List[String] = topWords.keySet.toList
@@ -71,8 +68,6 @@ object CreateWordList {
         Option.empty[LabeledSMSText]
     }
   }.filter(_.isDefined).map(_.get)
-
-  labeledSmsTexts.foreach(println)
 
   /**
    * Contains the tokenized SMS texts together with their labels.

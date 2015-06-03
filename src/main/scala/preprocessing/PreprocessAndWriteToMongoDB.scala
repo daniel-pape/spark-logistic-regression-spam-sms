@@ -17,11 +17,11 @@ object MongoFactory {
 
   private final val SERVER = "localhost"
   private final val PORT = 27017
-  private final val DATABASE = "spam_sms_db"
-  private final val COLLECTION = "spam_sms"
+  private final val DB_NAME = "spam_sms_db"
+  private final val COLLECTION_NAME = "spam_sms"
 
   private final val connection = MongoConnection(SERVER, PORT)
-  private final val collection = connection(DATABASE)(COLLECTION)
+  private final val collection = connection(DB_NAME)(COLLECTION_NAME)
 
   def buildDBObject(input: DBInput): DBObject = {
     val builder = MongoDBObject.newBuilder
@@ -32,8 +32,8 @@ object MongoFactory {
     builder.result()
   }
 
-  def insertDBObject(dBObject: DBObject) = {
-    collection += dBObject
+  def insertDBObject(dbObject: DBObject) = {
+    collection += dbObject
   }
 }
 
@@ -46,10 +46,7 @@ object PreprocessAndWriteToMongoDB extends App {
 
   val reader: CSVReader  = new CSVReader(new FileReader(path), CSVSeparator)
   val src = fromFile(path)
-
   val wordList = CreateWordList.wordList
-  println("word list: " + CreateWordList.wordList)
-
 
   for (line <- src.getLines()) {
     val Array(label, text) = line.split(CSVSeparator).map(_.trim)
@@ -62,5 +59,4 @@ object PreprocessAndWriteToMongoDB extends App {
     val dbObject = buildDBObject(dbInput)
     insertDBObject(dbObject)
   }
-
 }

@@ -1,11 +1,10 @@
-package Test
+package preprocessing
 
 import org.apache.spark.mllib.linalg.Vectors
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import preprocessing.DocumentVectorizer
 
 @RunWith(classOf[JUnit4])
 class DocumentVectorizerTest {
@@ -32,5 +31,15 @@ class DocumentVectorizerTest {
     assertEquals("`vectorize` should return correct term frequency vector", expected, actual)
   }
 
-  // TODO: Test with empty document and empty word list!
+  @Test
+  def VectorizationOfEmptyInputResultsInZeroVector(): Unit = {
+    val input = ""
+    val document = input.split(" ")
+    val wordList = List("be", "not", "To", "unused")
+
+    val expected = Vectors.dense(Array(0.0, 0.0, 0.0, 0.0))
+    val actual = DocumentVectorizer.vectorize(document, wordList)
+
+    assertEquals("Vectorization of empty document should yield zero vector", expected, actual)
+  }
 }

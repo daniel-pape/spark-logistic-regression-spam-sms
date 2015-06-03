@@ -32,6 +32,7 @@ object DocumentVectorizer {
    * @return The term frequency vector obtained from the document based on the lift of words.
    */
   def vectorize(document: Array[String], wordList: List[String]): linalg.Vector = {
+    require(wordList.nonEmpty, "Vectorization of document requires non-empty `wordList`.")
     val _document = document.map(_.toLowerCase)
     val _wordList = wordList.map(_.toLowerCase).sorted
 
