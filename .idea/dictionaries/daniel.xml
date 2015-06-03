@@ -9,11 +9,13 @@
       <w>lbld</w>
       <w>linalg</w>
       <w>mllib</w>
+      <w>mongo</w>
       <w>normalizedcurrencysymbol</w>
       <w>normalizedemailadress</w>
       <w>normalizedemonicon</w>
       <w>normalizednumber</w>
       <w>normalizedurl</w>
+      <w>preprocess</w>
       <w>preprocessing</w>
       <w>tokenization</w>
       <w>tokenized</w>

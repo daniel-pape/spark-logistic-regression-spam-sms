@@ -130,6 +130,7 @@ object LineCleaner {
       .map(removeHTMLCharacterEntities)
       .map(normalizeNumbers)
       .map(removePunctuationAndSpecialChars)
+      .map(_.trim)
       .head
   }
 }

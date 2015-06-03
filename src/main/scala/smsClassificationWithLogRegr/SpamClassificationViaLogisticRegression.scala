@@ -1,9 +1,9 @@
 package smsClassificationWithLogRegr
 
-import java.io.{FileWriter, StringReader}
+import java.io.StringReader
 
-import com.opencsv.{CSVReader, CSVWriter}
-import org.apache.spark.mllib.linalg
+import com.opencsv.CSVReader
+import common.Common._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
@@ -16,27 +16,7 @@ import scala.collection.Map
  * configuration as well as $MODULE_DIR$ as working directory.
  */
 object SpamClassificationViaLogisticRegression extends App {
-  case class LabeledSMSText(label: String, SMSText: String)
-  case class LabeledTokenizedSMSText(label: String, tokenizedSMSText: Array[String])
-  case class LabeledTFVector(encodedLabel: Int, TFVector: linalg.Vector)
-
-  def writeToFile(labeledTfVectors: RDD[LabeledTFVector]) = {
-    val outputPath = "./src/main/resources/data/tf-vectors.tsv"
-    val separator = '\t'
-    val writer = new CSVWriter(new FileWriter(outputPath), separator)
-
-    labeledTfVectors.foreach {
-      labeledTfVector =>
-        val label = Array(labeledTfVector.encodedLabel.toString)
-        val features = labeledTfVector.TFVector.toArray.map(_.toString)
-        val entry = Array.concat(label, features)
-        writer.writeNext(entry)
-    }
-
-    writer.close()
-  }
-
-  def getTop100WordsList(labeledTokenizedSmsTexts: RDD[LabeledTokenizedSMSText]): List[String] = {
+  def getTopWordsList(labeledTokenizedSmsTexts: RDD[LabeledTokenizedSMSText]): List[String] = {
     val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
     val wordCount = words.map(word => (word, 1)).reduceByKey((k, l) => k + l).collect().size
     val wordFrequencyMap: Map[String, Long] = words.countByValue()
@@ -49,16 +29,13 @@ object SpamClassificationViaLogisticRegression extends App {
   }
 
   val sc = new SparkContext(new SparkConf().setAppName("SpamClassificationViaLogisticRegression"))
-  val path = "./src/main/resources/data/sms-spam-collection.tsv"
   val input: RDD[String] = sc.textFile(path)
-  val separator = '\t'
 
   /**
-   * Contains the [[smsClassificationWithLogRegr.SpamClassificationViaLogisticRegression.LabeledSMSText]]s
-   * that are correctly parsed from the input file.
+   * Contains the [[common.Common.LabeledSMSText]]s that are correctly parsed from the input file.
    */
   val labeledSmsTexts: RDD[LabeledSMSText] = input.map { line =>
-    val reader = new CSVReader(new StringReader(line), separator)
+    val reader = new CSVReader(new StringReader(line), CSVSeparator)
 
     try {
       val nextLine: Option[List[String]] = Option(reader.readNext()).map(_.toList)
@@ -96,7 +73,7 @@ object SpamClassificationViaLogisticRegression extends App {
   /**
    * The list of words used to build the term frequency vectors.
    */
-  val wordList = getTop100WordsList(labeledTokenizedSmsTexts)
+  val wordList = getTopWordsList(labeledTokenizedSmsTexts)
 
   /**
    * Contains the labeled TF vectors where the label for "ham" is encoded as 0 and the
