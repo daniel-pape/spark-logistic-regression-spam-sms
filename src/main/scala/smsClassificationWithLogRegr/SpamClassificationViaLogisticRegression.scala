@@ -12,7 +12,7 @@ import preprocessing.{DocumentVectorizer, LineCleaner}
 import scala.collection.Map
 
 /**
- * Executable Spark driver programme. Use VM option -Dspark.master=local in the run
+ * Executable Spark driver programme. Use VM option "-Dspark.master=local" in the run
  * configuration as well as $MODULE_DIR$ as working directory.
  */
 object SpamClassificationViaLogisticRegression extends App {
