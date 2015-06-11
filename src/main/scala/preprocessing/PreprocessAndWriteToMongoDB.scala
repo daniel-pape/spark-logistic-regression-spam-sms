@@ -13,7 +13,7 @@ import scala.io.Source._
  * as a collection of MongoDB documents. Use case: Exchange with R.
  */
 object PreprocessAndWriteToMongoDB extends App {
-  import exchange.MongoFactory._
+  import dataExchange.MongoFactory._
 
   val reader: CSVReader  = new CSVReader(new FileReader(path), CSVSeparator)
   val src = fromFile(path)

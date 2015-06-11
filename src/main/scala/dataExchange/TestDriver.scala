@@ -1,4 +1,4 @@
-package exchange
+package dataExchange
 
 import org.apache.spark.{SparkConf, SparkContext}
 

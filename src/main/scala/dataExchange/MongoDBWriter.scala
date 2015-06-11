@@ -1,4 +1,4 @@
-package exchange
+package dataExchange
 
 import common.Common.MongoDBConf
 import org.apache.hadoop.conf.Configuration

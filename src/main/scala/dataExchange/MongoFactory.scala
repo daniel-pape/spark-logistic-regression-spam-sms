@@ -1,4 +1,4 @@
-package exchange
+package dataExchange
 
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports.wrapDBObj
