@@ -4,8 +4,11 @@
       <w>&amp;amp</w>
       <w>&amp;reg</w>
       <w>&amp;yen</w>
+      <w>bson</w>
       <w>emonicon</w>
       <w>emonicons</w>
+      <w>hadoop</w>
+      <w>hdfs</w>
       <w>lbld</w>
       <w>linalg</w>
       <w>mllib</w>
