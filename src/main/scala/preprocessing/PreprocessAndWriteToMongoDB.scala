@@ -12,7 +12,6 @@ import preprocessing.LineCleaner._
 
 import scala.io.Source._
 
-
 object MongoFactory {
   private final val SERVER = "localhost"
   private final val PORT = 27017

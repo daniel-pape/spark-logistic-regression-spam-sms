@@ -53,7 +53,6 @@ object CreateWordList {
           val smsText = line(1)
           val smsTextCleaned = LineCleaner.clean(smsText)
           val result = LabeledSMSText(label, smsTextCleaned)
-
           Some(result)
         case Some(line) if line.length != 2 =>
           // The `line` was not parsed correctly and we ignore subsequently.
