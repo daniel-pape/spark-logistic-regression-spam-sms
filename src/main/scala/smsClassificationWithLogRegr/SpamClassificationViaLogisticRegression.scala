@@ -4,6 +4,8 @@ import java.io.StringReader
 
 import com.opencsv.CSVReader
 import common.Common._
+import org.apache.hadoop.conf.Configuration
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
@@ -18,7 +20,7 @@ import scala.collection.Map
 object SpamClassificationViaLogisticRegression extends App {
   def getTopWordsList(labeledTokenizedSmsTexts: RDD[LabeledTokenizedSMSText]): List[String] = {
     val words = labeledTokenizedSmsTexts.flatMap(lbldText => lbldText.tokenizedSMSText)
-    val wordCount = words.map(word => (word, 1)).reduceByKey((k, l) => k + l).collect().size
+    val wordCount = words.map(word => (word, 1)).reduceByKey(_ + _).collect().size
     val wordFrequencyMap: Map[String, Long] = words.countByValue()
 
     val threshold = 136
@@ -28,7 +30,19 @@ object SpamClassificationViaLogisticRegression extends App {
     topWordsList
   }
 
-  val sc = new SparkContext(new SparkConf().setAppName("SpamClassificationViaLogisticRegression"))
+  Logger.getLogger("org").setLevel(Level.WARN)
+  Logger.getLogger("akka").setLevel(Level.WARN)
+  Logger.getLogger("spark").setLevel(Level.WARN)
+
+  val scf = new SparkConf()
+  scf.setMaster("local[*]")
+  scf.setAppName("SpamClassificationViaLogisticRegression")
+  val sc = new SparkContext(scf)
+
+  val hadoopConfig: Configuration = sc.hadoopConfiguration
+  hadoopConfig.set("fs.hdfs.impl", classOf[org.apache.hadoop.hdfs.DistributedFileSystem].getName)
+  hadoopConfig.set("fs.file.impl", classOf[org.apache.hadoop.fs.LocalFileSystem].getName)
+
   val input: RDD[String] = sc.textFile(path)
 
   /**
